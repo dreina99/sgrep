@@ -33,9 +33,29 @@ void parseText(char** chars, int size, int* isPattern, int* location, int* isHea
     }
 }
 
+void printPatternLines(char* pattern, FILE* file, int isColor, int isLineNum)
+{
+    char input[1024];
+    char* x;
+    int i = 1;
+    while(x)
+    {
+        x = fgets(input, sizeof(input), file);
+        if(feof(file)) break;
+        
+        if(strstr(input, pattern) != NULL)
+        {
+            if(isLineNum)
+                printf("%d: %s",i, input);
+            else
+                printf("%s", input);
+        }
+        i++;
+    }
+}
+
 int main(int argc, char **argv)
 {
-    char input [1024];
     int isHead = 0;
     int isPattern = 0;
     int isColor = 0;
@@ -73,26 +93,9 @@ int main(int argc, char **argv)
             if(isPattern)
             {
                 char* pattern = argv[pLocation + 1];
-                char* x;
-                /* Read one character at a time from file, stopping at EOF, which
-                indicates the end of the file. Note that the idiom of "assign
-                to a variable, check the value" used below works because
-                the assignment statement evaluates to the value assigned. */
-                while(x)
-                {
-                    x = fgets(input, sizeof(input), file);
-                    if(feof(file)) break;
-                    
-                    if(strstr(input, pattern) != NULL)
-                    {
-                        printf("%s", input);
-                    }
-                }
-                fclose( file );
+                printPatternLines(pattern, file, isColor, isLineNum);
             }
-            
         }
+        fclose(file);
     }
-    
-    
 }
