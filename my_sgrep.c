@@ -8,6 +8,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#define COLOR_CODE    "\e[0;31m" /* Red */
+#define RESET_CODE    "\e[0;0m"
+
 // checks for -h -p -c -n in terminal line
 void parseText(char** chars, int size, int* isPattern, int* location, int* isHead, int* isColor, int* isLineNum)
 {
@@ -45,7 +48,23 @@ void printPatternLines(char* pattern, FILE* file, int isColor, int isLineNum)
         
         if(strstr(input, pattern) != NULL)
         {
-            if(isLineNum)
+            char* result = strstr(input, pattern);
+            int position = result - input;
+            if(isLineNum && isColor)
+            {
+                printf("%d: ", i);
+                printf("%.*s", position, input);
+                printf(COLOR_CODE "%s" RESET_CODE, pattern);
+                printf("%s", strstr(input, pattern) + strlen(pattern));
+            }
+            else if(isColor)
+            {
+                printf("%.*s", position, input);
+                printf(COLOR_CODE "%s" RESET_CODE, pattern);
+                printf("%s", strstr(input, pattern) + strlen(pattern));
+            }
+            //printf("%d\n", position);
+            else if(isLineNum)
                 printf("%d: %s",i, input);
             else
                 printf("%s", input);
@@ -81,7 +100,6 @@ int main(int argc, char **argv)
     else
     {
         FILE *file = fopen(argv[argc-1], "r");
-        
         
         if(file == NULL)
         {
